@@ -12,7 +12,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div class="flex flex-col relative bg-gray-200 h-[100vh]">
+    <div class="flex flex-col relative bg-gray-200">
       <Header path="Amazon.png">
       </Header>
       <Content></Content>
