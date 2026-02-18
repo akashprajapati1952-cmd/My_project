@@ -16,7 +16,7 @@ function Product(data) {
       </div>
       
       <p class="text-xs font-bold">₹{data.price}</p>
-      <Link className="text-xs bg-blue-700 p-1 border rounded-md" to="/product/1">Show detail</Link>
+      <Link className="text-xs bg-blue-700 p-1 border rounded-md" to={`/product/${data.id}`}> Show detail </Link>
       
     </div>
   );
