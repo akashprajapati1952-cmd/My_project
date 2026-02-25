@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 
 function Product(data) {
   return(
-    <div class="w-25 ">
-      <img class="w-full h-25" src={data.pic}></img>
+    <div class=" ">
+      <img class="w-full" src={data.pic}></img>
       <h2 class="text-xs tetx-gray-700">{data.catagory}</h2>
       <h1 class="text-xs font-bold">{data.name}</h1>
       <div class="flex h-3 ">

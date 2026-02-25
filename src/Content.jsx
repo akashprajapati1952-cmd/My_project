@@ -1,18 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Product from './Product.jsx';
 import {dataList} from './Api.jsx';
+import Loading from './Loading.jsx';
+import ErrorPage from './ErrorPage';
 
 
 
 function Content() {
-  const [allData, setAllData]=useState([]);
+  const [allData, setAllData]=useState();
   const [str, setStr]=useState("");
   const [sort, setSort]=useState("default");
+  const [loading, setLoading]=useState(true);
+  const [error, setError]=useState('');
   
   useEffect(function() {
-    const t=dataList();
-    t.then(function(mydummyData){
-      setAllData(mydummyData.data.products)
+    dataList().then(function(mydummyData){
+      setAllData(mydummyData);
+      setLoading(false);
+    }).catch(function(error){
+      setLoading(false);
+      setError(error.message)
     });
   }, []);
   
@@ -24,13 +31,19 @@ function Content() {
     let newSort=event.target.value;
     setSort(newSort);
   };
-  let mydata=[];
-  if(allData.length > 0){
+  if(error){
+    return <div className="flex grow justify-center items-center flex-col gap-2">
+      <h1 clasdName="text-2xl text-red-700">{error}</h1>
+    </div>;
+  };
+  let mydata;
+  if(!loading){
     mydata=allData.filter(
       function(product){
         return (product.title.toLowerCase().indexOf(str.toLowerCase()) != -1) || (product.category.toLowerCase().indexOf(str.toLowerCase()) != -1)
       }
     );
+  
   
     if(sort=="pricehigh"){
     mydata.sort(function(a,b){
@@ -58,13 +71,14 @@ function Content() {
       });
     }
   }
-  
-  
+  if(loading){
+    return <Loading>Loading products...</Loading>;
+  }
   
   
   
   return(
-    <div className="relative flex flex-col box-border mx-5 my-2 sm:mx-20 sm:my-7 grow bg-white min-h-[calc(90vh-16px)] sm:min-h-[calc(90vh-56px)]">
+    <div className="relative flex flex-col box-border overflow-auto w-full h-full">
       <input className="absolute top-3 left-3 sm:top-10 sm:left-10 w-[25%] p-1 border border-gray-300 bg-gray-200 text-xs " placeholder="Search"  onInput={controlSearch}></input>
       <select className="absolute top-3 right-3 sm:top-10 sm:right-10 ml-auto w-[25%] p-1 border border-gray-300 bg-gray-200 text-xs" onChange={controlSorting} value={sort}>
         <option value="default" >Default sorting</option>
@@ -72,7 +86,7 @@ function Content() {
         <option value="pricelow">Sort by price:low to high</option>
         <option value="pricehigh">Sort by price:high to low</option>
       </select>
-      <div className="flex mx-10 my-20  items-start gap-5 content-start justify-evenly flex-wrap grow overflow-auto">
+      { mydata.length > 1 ? <div className="grid mx-10 my-20 gap-2 grid-cols-3  w-[calc(100%-80px)] ">
         {mydata.map(function(product){
           return(<Product pic={product.thumbnail}
                key={product.id}
@@ -84,13 +98,13 @@ function Content() {
           />
           );
         })}
-      </div>
+      </div> : <div className=" text-red-700 self-center pt-[30vh]">Match not found!</div>}
       
-      <div className="flex gap-1 absolute bottom-3 left-3 sm:bottom-10 sm:left-10">
+      <div className="flex gap-1 m-3">
         <div className="text-white flex items-center justify-center text-xs border border-red-700 h-4 w-4 bg-red-700">1</div>
         <div className="flex items-center justify-center text-xs text-red-700 border border-red-700 h-4 w-4">2</div>
         <div className="flex items-center justify-center text-xs text-red-700 border border-red-700 h-4 w-4">→</div>
       </div>
-    </div>
+    </div> 
 )};
 export default Content;
