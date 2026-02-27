@@ -10,10 +10,15 @@ import PageNotFound from './PageNotFound.jsx'
 
 
 function App() {
-  const [cart, setCart]=useState({});
+  const savedCart=localStorage.getItem("mycarts");
+  const oldCart=savedCart ? JSON.parse(savedCart) : {};
+  const [cart, setCart]=useState(oldCart);
   function handleCartCount(productId, number){
     const oldnumber=cart[productId] || 0 ;
-    setCart({...cart, [productId] : oldnumber+number});
+    const newCart={...cart, [productId] : oldnumber+number};
+    localStorage.setItem("mycarts", JSON.stringify(newCart));
+    setCart(newCart);
+    console.log(newCart);
   };
   const totleCount=+Object.keys(cart).reduce(function(previous, current){
     return previous + cart[current]
